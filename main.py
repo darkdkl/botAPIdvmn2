@@ -4,7 +4,7 @@ import os
 import telegram
 
 def send_message(message):
-    bot = telegram.Bot(token=os.getenv('TELEGRAM_TOKEN'))
+    bot = telegram.Bot(token=os.environ('TELEGRAM_TOKEN'))
     bot.send_message(chat_id=639083663, text=message)
 
 def get_dvmn_info():
@@ -14,7 +14,7 @@ def get_dvmn_info():
         try:
             timestamp = None
             headers = {
-              'Authorization': os.getenv('DVMN_TOKEN'),
+              'Authorization': os.environ('DVMN_TOKEN'),
               'timestamp': timestamp
                     }
             response = requests.get(
