@@ -2,6 +2,17 @@ import requests
 import time
 import os
 import telegram
+import logging
+
+
+class TelegramBotLogsHandler(logging.Handler):
+
+    def emit(self, record):
+        send_message(self.format(record))
+        
+
+
+
 
 def send_message(message):
     bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
@@ -9,9 +20,17 @@ def send_message(message):
 
 def get_dvmn_info():
     
+    logger = logging.getLogger("Logs To Telegram")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramBotLogsHandler())
+
+    logger.info("Бот запущен")
+    
+  
 
     while True:
         try:
+            
             timestamp = None
             headers = {
               'Authorization': os.environ['DVMN_TOKEN'],
@@ -39,21 +58,24 @@ def get_dvmn_info():
             if not negative:
                 send_message(f'''У Вас проверили работу "{lesson_title}"
                          Преподаватель одобрил Вашу работу,можете приступать к следующему уроку ''')
+            
 
         except requests.exceptions.ReadTimeout:
-            print('время ожидания истекло...перезапускаемся')
+            logger.info('Время ожидания от dvmn.org истекло...перезапускаемся')
 
             continue
         except requests.exceptions.ConnectionError:
-            print('Сервер  недоступен...ожидаем')
+            logger.error('Сервер  dvmn.org недоступен...ожидаем')
             time.sleep(15)
             continue
         except KeyError:
             continue
         except requests.exceptions.HTTPError:
-            print(response.text)
+            logger.error("Бот упал с ошибкой : "+response.text)
             break
-
+        except:
+            logger.critical('Бот упал с ошибкой',exc_info=1)
+            time.sleep(150)
 
 
 if __name__ == "__main__":
