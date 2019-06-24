@@ -16,7 +16,7 @@ class TelegramBotLogsHandler(logging.Handler):
 
 def send_message(message,token=os.environ['TELEGRAM_TOKEN']):
     bot = telegram.Bot(token=token)
-    bot.send_message(chat_id=639083663, text=message)
+    bot.send_message(chat_id=os.environ['CHAT_ID'], text=message)
 
 def get_dvmn_info():
     
