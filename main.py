@@ -8,14 +8,14 @@ import logging
 class TelegramBotLogsHandler(logging.Handler):
 
     def emit(self, record):
-        send_message(self.format(record))
+        send_message(self.format(record),os.environ['TELEGRAM_LOGBOT_TOKEN'])
         
 
 
 
 
-def send_message(message):
-    bot = telegram.Bot(token=os.environ['TELEGRAM_TOKEN'])
+def send_message(message,token=os.environ['TELEGRAM_TOKEN']):
+    bot = telegram.Bot(token=token)
     bot.send_message(chat_id=639083663, text=message)
 
 def get_dvmn_info():
@@ -69,13 +69,14 @@ def get_dvmn_info():
             time.sleep(15)
             continue
         except KeyError:
+            logger.error('Зафиксированны ошибки',exc_info=1)
             continue
         except requests.exceptions.HTTPError:
             logger.error("Бот упал с ошибкой : "+response.text)
             break
         except:
             logger.critical('Бот упал с ошибкой',exc_info=1)
-            time.sleep(150)
+            time.sleep(30)
 
 
 if __name__ == "__main__":
