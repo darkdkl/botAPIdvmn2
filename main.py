@@ -8,39 +8,34 @@ import logging
 class TelegramBotLogsHandler(logging.Handler):
 
     def emit(self, record):
-        send_message(self.format(record),os.environ['TELEGRAM_LOGBOT_TOKEN'])
-        
+        send_message(self.format(record), os.environ['TELEGRAM_LOGBOT_TOKEN'])
 
 
-
-
-def send_message(message,token=os.environ['TELEGRAM_TOKEN']):
+def send_message(message, token=os.environ['TELEGRAM_TOKEN']):
     bot = telegram.Bot(token=token)
     bot.send_message(chat_id=os.environ['CHAT_ID'], text=message)
 
-def get_dvmn_info():
-    
+
+def main():
+
     logger = logging.getLogger("Logs To Telegram")
     logger.setLevel(logging.INFO)
     logger.addHandler(TelegramBotLogsHandler())
 
     logger.info("Бот запущен")
-    
-  
 
     while True:
         try:
-            
+
             timestamp = None
             headers = {
-              'Authorization': os.environ['DVMN_TOKEN'],
-              'timestamp': timestamp
-                    }
-            response = requests.get(
-                'https://dvmn.org/api/long_polling/', headers=headers)
-            if not response.ok:
-                raise requests.exceptions.HTTPError()
+                'Authorization': os.environ['DVMN_TOKEN'],
+                'timestamp': timestamp
+                      }
+            response = requests.get('https://dvmn.org/api/long_polling/', headers=headers)
+            response.raise_for_status()
 
+            
             response_json = response.json()
 
             if 'timestamp_to_request' in response_json:
@@ -58,7 +53,6 @@ def get_dvmn_info():
             if not negative:
                 send_message(f'''У Вас проверили работу "{lesson_title}"
                          Преподаватель одобрил Вашу работу,можете приступать к следующему уроку ''')
-            
 
         except requests.exceptions.ReadTimeout:
             logger.info('Время ожидания от dvmn.org истекло...перезапускаемся')
@@ -69,15 +63,15 @@ def get_dvmn_info():
             time.sleep(15)
             continue
         except KeyError:
-            logger.error('Зафиксированны ошибки',exc_info=1)
+            logger.error('Зафиксированны ошибки', exc_info=1)
             continue
         except requests.exceptions.HTTPError:
             logger.error("Бот упал с ошибкой : "+response.text)
             break
         except:
-            logger.critical('Бот упал с ошибкой',exc_info=1)
+            logger.critical('Бот упал с ошибкой', exc_info=1)
             time.sleep(30)
 
 
 if __name__ == "__main__":
-    get_dvmn_info()
+    main()
