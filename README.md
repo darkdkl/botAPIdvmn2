@@ -23,7 +23,7 @@ DVMN_TOKEN,TELEGRAM_TOKEN,TELEGRAM_LOGBOT_TOKEN,CHAT_ID .Значения для
 
 https://dvmn.org/api/docs/
 
-и передать значение токена переменной DVMN_TOKEN приложенния в разделе Settings 
+и передать значение токена переменной DVMN_TOKEN приложенния в разделе Settings приложения на Heroku
 
 
 
@@ -33,10 +33,10 @@ https://dvmn.org/api/docs/
 /start
 /newbot
 
-Передать значение токенов TELEGRAM_TOKEN и TELEGRAM_LOGBOT_TOKEN соответсвенно, в разделе Settings
+Передать значение токенов TELEGRAM_TOKEN и TELEGRAM_LOGBOT_TOKEN соответсвенно, в разделе Settings приложения на Heroku
 
 Получить свой chat_id, возможно написав в Telegram специальному боту: @userinfobot после необходимо
-передать значение переменной CHAT_ID приложенния в разделе Settings
+передать значение переменной CHAT_ID приложенния в разделе Settings приложения на Heroku
 
 
 #### Запуск
